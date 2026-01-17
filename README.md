@@ -114,74 +114,8 @@ The service will:
    gRPC: 45000.00 requests/second
    JSON: 12000.00 requests/second
    ```
-4. Keep running indefinitely
 
-## 📡 API Usage
 
-### gRPC API
-
-**Endpoint**: `localhost:8081`
-
-**Proto Definition**:
-```protobuf
-service PriceFetcher {
-  rpc FetchPrice(FetchPriceRequest) returns (FetchPriceResponse);
-}
-
-message FetchPriceRequest {
-  string ticker = 1;
-}
-
-message FetchPriceResponse {
-  string ticker = 1;
-  float price = 2;
-}
-```
-
-**Client Example**:
-```go
-package main
-
-import (
-    "context"
-    "log"
-    "github.com/aliexe/ms-priceFetcher/client"
-    "github.com/aliexe/ms-priceFetcher/proto"
-)
-
-func main() {
-    client, err := client.NewGRPCClient("localhost:8081")
-    if err != nil {
-        log.Fatal(err)
-    }
-
-    resp, err := client.FetchPrice(context.Background(), &proto.FetchPriceRequest{
-        Ticker: "AAPL",
-    })
-    if err != nil {
-        log.Fatal(err)
-    }
-
-    log.Printf("Price: %s = %f", resp.Ticker, resp.Price)
-}
-```
-
-### JSON/REST API
-
-**Endpoint**: `localhost:8080`
-
-**Get Stock Price**:
-```bash
-curl "http://localhost:8080/price?ticker=AAPL"
-```
-
-**Response**:
-```json
-{
-  "ticker": "AAPL",
-  "price": 150.0
-}
-```
 
 **Supported Tickers**:
 - `AAPL` - Apple Inc. ($150.00)
@@ -212,30 +146,6 @@ The service automatically runs benchmarks on startup comparing gRPC vs JSON perf
 
 *Results may vary based on hardware and system load*
 
-## 📁 Project Structure
-
-```
-microservice-priceFetcher/
-├── main.go              # Entry point, benchmark logic, server orchestration
-├── service.go           # Core business logic and mock data
-├── grpc_server.go       # gRPC server implementation
-├── json_api.go          # HTTP/REST server implementation
-├── logging.go           # Logging middleware/decorator
-├── Makefile             # Build and proto generation commands
-├── go.mod               # Go module dependencies
-├── go.sum               # Dependency checksums
-├── client/              # Client implementations
-│   └── client.go        # HTTP and gRPC clients
-├── example/             # Usage examples
-│   └── client_example.go # Example client usage
-├── proto/               # Protocol buffer definitions
-│   ├── service.proto    # Service definition
-│   ├── service.pb.go    # Generated messages
-│   └── service_grpc.pb.go # Generated gRPC code
-└── types/               # Shared types
-    └── types.go         # Response types
-```
-
 ## 🔧 Configuration
 
 ### Environment Variables
@@ -263,43 +173,3 @@ var priceMocks = map[string]float64{
 - **Dependency Injection**: Services are injected into servers
 - **Middleware Pattern**: HTTP handler wrapper function
 - **Factory Pattern**: `New*` functions create instances
-
-## 🚀 Roadmap
-
-### Phase 1 (In Progress)
-- [ ] Real data integration with financial APIs
-- [ ] Comprehensive testing suite
-- [ ] Docker containerization
-
-### Phase 2
-- [ ] Caching layer (Redis)
-- [ ] Database persistence (PostgreSQL)
-- [ ] Authentication & authorization
-
-### Phase 3
-- [ ] Kubernetes deployment
-- [ ] Metrics & monitoring (Prometheus)
-- [ ] CI/CD pipeline
-
-### Phase 4
-- [ ] Configuration management
-- [ ] Advanced error handling
-- [ ] Security hardening
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## 📄 License
-
-[Your License Here]
-
-## 👤 Author
-
-[Your Name]
-
-## 🙏 Acknowledgments
-
-- gRPC and Protocol Buffers teams
-- Go community
-- Logrus library contributors
